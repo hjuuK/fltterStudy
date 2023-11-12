@@ -1,0 +1,20 @@
+flutter
+
+위젯
+글자위젯 - Text('글내용')
+이미지위젯 - Image.asset('경로') -> 이미지를 넣고 싶으면 이미지가 프로젝트 폴더 안에 존재해야 함 (폴더명: assets)
+	1. 이미지보관용 assets 폴더 만들고 이미지 넣기
+	2. 이미지 등록 -> pubspec.yaml(앱 만들때 필요한 모든 자료들을 정리한 파일(외부패키지, 라이브러리 ... )) 파일
+			pubspec.yaml 파일에서 flutter: 밑에 assets: 코드 짜고 하단에 - assets/ (assets 폴더 안에 모든 파일 등록)
+아이콘위젯 - Icon(Icons.아이콘이름) -> 아이콘이름은 플러터 홈페이지에 있음
+박스위젯 - Container() / SizedBox()
+	스타일줄 땐 (스타일명:값) -> ex) Container(width: 50, height: 50, color: Colors.blue)
+	
+** Flutter의 사이즈 단위는 LP (50LP == 1.2cm)
+
+Center() : 내 자식 위젯의 기준점을 중앙으로 설정
+	Center(
+					child: Container(width: 50, height: 50, color: Colors.blue)
+				) -> 원하는 위치에 생성되지 않을 때 부모 위젯으로 위치 설정
+
+위젯 ( child: 위젯() )				 -> child : 자식 위젯으로 넣을 수 있도록 도와주는 파라미터
