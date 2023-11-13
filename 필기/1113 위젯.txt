@@ -1,0 +1,100 @@
+flutter
+
+위젯
+글자위젯 - Text('글내용')
+이미지위젯 - Image.asset('경로') -> 이미지를 넣고 싶으면 이미지가 프로젝트 폴더 안에 존재해야 함 (폴더명: assets)
+	1. 이미지보관용 assets 폴더 만들고 이미지 넣기
+	2. 이미지 등록 -> pubspec.yaml(앱 만들때 필요한 모든 자료들을 정리한 파일(외부패키지, 라이브러리 ... )) 파일
+			pubspec.yaml 파일에서 flutter: 밑에 assets: 코드 짜고 하단에 - assets/ (assets 폴더 안에 모든 파일 등록)
+아이콘위젯 - Icon(Icons.아이콘이름) -> 아이콘이름은 플러터 홈페이지에 있음
+박스위젯 - Container() / SizedBox()
+	스타일줄 땐 (스타일명:값) -> ex) Container(width: 50, height: 50, color: Colors.blue)
+	
+** Flutter의 사이즈 단위는 LP (50LP == 1.2cm)
+
+Center() : 내 자식 위젯의 기준점을 중앙으로 설정
+	Center(
+					child: Container(width: 50, height: 50, color: Colors.blue)
+				) -> 원하는 위치에 생성되지 않을 때 부모 위젯으로 위치 설정
+
+위젯 ( child: 위젯() )				 -> child : 자식 위젯으로 넣을 수 있도록 도와주는 파라미터
+
+MaterialApp() -> 구글이 제공하는 Material 테마를 이용하여 앱 만들 수 있음 (구글 스타일)
+if) 애플 스타일 -> Cupertino~()
+		커스터마이징 -> MaterialApp() => MaterialApp 사용하고 구글 스타일 수정하면 됨
+		
+		
+home: Scaffold( -> 상중하로 나눠주는 위젯
+        appBar: AppBar(), -> 상단에 들어갈 위젯
+        body: Container(), -> 중단에 들어갈 위젯
+        bottomNavigationBar: BottomAppBar(), -> 하단에 들어갈 위젯
+      )
+
+
+* 여러 위젯 가로로 배치하는 법 : Row( children: [] )
+ return MaterialApp(
+      home: Scaffold(
+        body: Row(  
+          children: const [  => 여기서 const를 안쓰면 밑줄이 생기는데 이유는 Lint 때문이다.  => Lint 제거 방법은 analysis_options.yaml에서 rules 안에 
+																																								prefer_const_literals_to_create_immutables : false 추가하면 됨
+            Icon(Icons.star),
+            Icon(Icons.star)
+          ],
+        ),
+      )
+    );
+* 여러 위젯 세로로 배치하는 법 : Column( children: [] )
+	return MaterialApp(
+      home: Scaffold(
+        body: Column(
+          children: [
+            Icon(Icons.star),
+            Icon(Icons.star)
+          ],
+        ),
+      )
+    );
+		
+		
+* 정렬 : mainAxisAlignment: MainAxisAlignment / crossAxisAlignment: ~
+	return MaterialApp(
+      home: Scaffold(
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,  // MainAxisAlignment. 자동완성 활용하면 됨
+					crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.star),
+            Icon(Icons.star)
+          ],
+        ),
+      )
+    );
+		** Row()의 mainAxis는 가로축 정렬 코드 / crossAxis는 세로축 정렬 코드
+		** Column()의 mainAxis는 세로축 정렬 코드 / crossAxis는 가로축 정렬 코드
+
+
+* BottomAppBar 의 높인 조절은 ? Container 안에 Row		
+			=> Container 대충 쓰면 Lint로 잡아주기 때문에 밑줄이 생기는데 이는 남용하지 않게 하기 위해서이다.
+					이럴때는 SizedBox를 사용해도 된다. (width, height, child만 필요한ㄴ 박는 SizedBox() 사용)
+					
+---------------------------------------------------------------------
+return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar( title: Text('앱임') ),
+        body: Text('안녕'),
+        bottomNavigationBar: BottomAppBar(
+          child: SizedBox(
+            height: 65,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(Icons.phone),
+                Icon(Icons.message),
+                Icon(Icons.contact_page)
+              ],
+            ),
+          )
+        )
+      )
+    );
+---------------------------------------------------------------------
