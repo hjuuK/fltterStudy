@@ -1,0 +1,137 @@
+flutter - GetX 네이게이션 기능
+
+1. GetX Navigation
+	Get.to(FirstPage()); // 넘어가기
+	Get.back(); // 뒤로 가기
+	Get.offAll(HomePage()); // 홈으로 이동하고 Stack에 쌓인 페이지들 전부 삭제
+	
+2. GetX Named Navigation
+	- transition 속성 이용
+	initialRoute: "/",
+	getPages: [
+		GetPage(name: "/", page: () => HomePage(), transition: Transition.zoom),
+		GetPage(
+			name: "/first",
+			page: () => FirstNamedPage().
+			transition: Transition.zoom),
+		GetPage(
+			name: "/second",
+			page: () => SecondNamedPage(),
+			transition: Transition.zoom),
+		GetPage(name: "/user/:uid", page: () => UserPage())
+	],
+	
+3. Parameter 같이 넘기기
+	- Get.to 혹은 toNamed 메소드에 arguments라는 Parameter에 객체를 전달
+	class DTO {
+		String name;
+		int num;
+		
+		DTO({this.name, this.num});
+	}
+	
+	Get.to(FirstPage(), arguments: "굳굳");
+	Get.toNamed("/first", arguments: {"name":"굳굳", "num":22});
+	Get.toNamed("/first", arguments: DTO(name: "굳굳", num: 22));
+	
+	- 받는 쪽
+	Text("${Get.arguments['name']} ${Get.arguments['num'].toString()}"), // JSON 방식
+	Text("${(Get.arguments as DTO).name} ${(Get.arguments as DTO).num.toString()}"), // 객체 방식
+	
+-----------------------------------------------------------------------------
+
+
+GetX 라우트 관리
+
+GetX Navigation 코드
+	Get.to(Page1());
+	
+1) Get.to
+	Get.to(Page2());
+	
+	[Page1] 
+				 ⬇️
+	[Page1] [Page2]
+	-> Page1에서 Page2로 이동을 하면 Page2가 추가로 쌓이게 됨
+	
+2) Get.back
+	Get.back();
+	
+	[Page1] [Page2]
+				 ⬇️
+	[Page1]
+	-> Page2에서 Get.back을 호출하게 되면 Page2가 삭제가 되며 Page1으로 돌아오게 됨
+	
+3) Get.off
+	Get.off(Page2());
+	
+	[Page1]
+				 ⬇️
+	[Page2]
+	-> Page1에서 Page2를 off로 이동하게 되면 Page1은 삭제가 되면서 Page2가 쌓이게 됨 (화면 전환)
+	
+4) Get.offAll
+	Get.offAll(Page3());
+	
+	[Page1] [Page2]
+				 ⬇️
+	[Page3]
+	-> Page1에서 Page2로 to로 이동한 화면(Get.to(Page2()))에서 Page3를 offAll로 이동하게 되면
+		 Stack에 있던 모든 화면들을 삭제하고 호출된 Page3만 Stack에 쌓이게 됨 (1,2 메모리 삭제, 3으로 화면 전환)
+	
+* 화면 전환 애니메이션
+	transition 속성
+		Get.to(Page2(), transition: Transition.rightToLeft);
+		
+		- Transition.fade
+		- Transition.fadeIn
+		- Transition.rightToLeft
+		- Transition.leftToRight
+		- Transition.upToDown
+		- Transition.downToUp
+		- Transition.rightToLeftWithFade
+		- Transition.leftToRightWithFade
+		- Transition.zoom
+		- Transition.topLevel
+		- Transition.noTransition
+		- Transition.cupertino
+		- Transition.cupertinoDialog
+		- Transition.size
+		- Transition.native
+		
+* Data(Arguments) 전달
+
+	1) Data 전달
+		Get.to(Page2(), arguments: 'test');
+		Get.to(Page2(), arguments: {'name' : 'tester', 'number' : '10'});
+		
+		- 단일 문자만 전달할 때 : arguments: '문자'
+		- 여러 값을 전달할 때 : arguments:{'key1':'value1', 'key2':'value2'...}
+			Map을 JSON 형태로 전달
+			
+	2) Data 수신
+		Text('${Get.arguments}') // test
+		Text('${Get.arguments['name']}') // tester
+		Text('${Get.arguments['number']}') // 10
+		
+		- 단일 문자만 받을 때 : ${Get.arguments}
+		- 여러 값을 받을 때 : ${Get.arguments['key1']}, ${Get.arguments['key2']}...
+			arguments에 키로 조회
+	
+	3) Get.back Data 전달
+		Get.back(result: '결과값');
+		
+		- back으로 이전 화면으로 돌아오면서 값을 전달하고자 할 때 back 메서드 안에 result 파라미터를 전달
+		
+	4) Get.back Data 수신
+		() async {
+				final response = await Get.to(Page2());
+		}
+		
+		- await 키워드로 이동하면 이동된 페이지에서 back 메서드로 result값이 전달 시 이전 페이지가 값을 받을 수 있음
+			await 사용하기 위해서는 메서드가 async가 선언이 되어야 함
+			
+			
+--------------------------------------------------------------------
+
+GetView는 주로 단일 컨트롤러를 사용하여 화면을 업데이트하는 데 사용됨
