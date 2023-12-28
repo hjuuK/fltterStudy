@@ -1,0 +1,144 @@
+GetX 상태(State) 관리
+
+GetX에는 크게 두가지의 상태 관리법이 존재함
+
+1. simple 방식 : reactive 방식보다 메모리를 적게 사용한다는 장점
+
+	1) 변수 선언
+		- GetxController를 extend하는 Controller 클래스를 선언하고, 초기값을 0으로 설정한 count1 변수를 선언
+		
+		class Controller extends GetxController {
+			var count1 = 0;
+		}
+		
+	2) GetBuilder()
+		- GetBuilder 을 통해 화면에 count1 변수를 보여줌.
+			** 이때 init을 설정하지 않으면 에러가 발생하는 것을 유의
+		
+		GetBuilder<Controller>(
+			init: Controller(),
+			builder: (_) => Text(
+					'clicks: ${_.count1}',
+				),
+		)
+		
+	3) update()
+		- count1 변수 증가 필요. 또한 증가할 때 이를 화면에 알려줘야 함.
+			이를 위해 update() 함수 사용
+			
+		class Controller extends GetxController {
+			var count1 = 0;
+			
+			void increment1() {
+				count1++;
+				update();
+			}
+		}
+		
+	** Get.find(), Get.put() 은 simple, reactive 모두에서 사용됨
+	4) Get.find()
+		- Get.find()을 사용하여 increment1()을 호출하는 버튼을 만들어 텍스트 아래에 배치
+		
+		TextButton(onPressed: Get.find<Controller>().increment1, child: Text('increment1'))
+		
+		* 리빌드하면 Get.find<Controller>()에서 에러 발생
+			=> Get.find<Controller>()가 Controller를 찾는 시점이 GetBuilder()의
+					int에서 Controller를 등록하기 이전이기 때문
+					=> 이를 해결하기 위해 Get.put() 사용
+					
+	5) Get.put()
+		- build() 메서드 내부에 controller 변수를 선언하며, 이때 Get.put()를 통해 Controller를 등록
+		
+		@override
+		Widget build(BuildContext context) {
+			final controller = Get.put(Controller());
+			// ...
+		}
+		
+		controller 변수를 선언하면서 Controller를 등록했기 때문에 GetBuilder에서 또 등록할 필요가 없음
+		따라서 init 부분을 삭제
+		
+		GetBuilder<Controller>(
+			// init 부분 삭제.
+			builder: (_) => Text(
+				'clicks: ${_.cout1}',
+			),
+		)
+		
+	=> 버튼에서 increment1()를 호출할 때, Get.find() 대신 controller 변수를 사용.
+		TextButton(onPressed: controller.increment1, child: Text('increment1'))
+		
+		
+2. reactive 방식 : simple 방식에는 없는 특별한 기능이 있음
+
+	1) Rx(observable 변수) 선언
+		- observable 변수를 Rx라고 부름. 
+			* Rx를 선언하는 방법 3가지
+				(1) Value.obs				| 	var count2 = 0.obs; 	=> 주로 사용
+				(2) Rx<Type>(Value) | 	var count2 = Rx<int>(0);
+				(3) RxType(Value)		|		var count2 = RxInt(0);
+				
+	2) Rx(observable 변수)의 값 접근 .value
+		- Rx의 값을 접근할 때는 일반적인 변수의 값의 경우와 다르게 .value 를 통해 접근 가능
+		** String과 int 같은 primitive type에는 .value 를 사용해야하지만,
+				List 에서는 .value 가 필요없음. 
+				=> dart api가 리스트에서만 .value 없이도 값에 접근할 수 있게 해주기 때문
+				
+		void increment2() => count2.value++;
+		
+		.value를 사용해서 count2 의 값을 1 증가시키는 increment2() 함수를 정의.
+		reactive 방식에선 update() 함수가 필요 없음
+		
+	3) GetX()
+	- simple 방식의 GetBuilder 와 같은 역할을 하는 것이 GetX
+	
+	GetX<Controller>(
+		builder: (_) => Text(
+			'clicks: ${_.count2.value}',
+		),
+	)
+	
+	필요한 경우에는 GetBuilder 에서처럼 init을 통해 Controller 등록 가능
+	
+	4) Obx()
+	- GetX보다 더 간단한 방법. 
+		Obx() 의 경우 사용할 컨트롤러의 종류를 따로 명시할 필요가 없고, 보여줄 위젯만 리턴하면 됨
+		하지만 이 방법은 무조건 Get.put()을 필요로 함
+		
+	Obx(() {
+		return Text(
+			'clicks: ${controller.count2.value}',
+		);
+	}),
+	
+	
+	5) Workers
+	- reactive 방식에서만 사용 가능
+		Workers를 사용하면 Rx들의 변화를 감지하고 다양한 상황 별로 적절한 대응을 하도록 구현할 수 있음
+		
+		Workers 종류 4가지
+		
+		(1)	count2가 처음으로 변경되었을 때만 호출
+				once(count2, (-) {
+					print('$_이 처음으로 변경되었습니다.');
+				});
+		(2) count2가 변경될 때마다 호출
+				ever(count2, (-) {
+					print('$_이 변경되었습니다.');
+				});
+		(3) count2가 변경되다가 마지막 변경 후, 1초간 변경이 없을 때 호출
+				debounce(
+					count2,
+					(_) {
+						print('$_가 마지막으로 변경된 이후, 1초간 변경이 없습니다.');
+					};
+					time: Duration(seconds: 1),
+				);
+		(4) count2가 변경되고 있는 동안, 1초마다 호출
+				interval(
+					count2,
+					(_) {
+						print('$_가 변경되는 중입니다.(1초마다 호출)');
+					},
+					time: Duration(seconds: 1),
+				);

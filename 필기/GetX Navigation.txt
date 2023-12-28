@@ -135,3 +135,61 @@ GetX Navigation 코드
 --------------------------------------------------------------------
 
 GetView는 주로 단일 컨트롤러를 사용하여 화면을 업데이트하는 데 사용됨
+
+--------------------------------------------------------------------
+
+** Snackbar : 기본적으로 Snackbar는 하단에서만 나옴. 하지만 GetX를 사용하면 Snackbar를 상단에 보이게 할 수도 있음
+
+1. Get.snackbar()
+	Get.snackbar('Snackbar', 'Snackbar', snackPosition: SnackPosition.TOP);
+	- 제목과 메시지를 설정하면 해당 내용으로 Snackbar를 보여줌.
+		지속시간(duration), 방향(snackPosition), 배경색(backgroundColor) 등 여러 설정들 추가 가능
+		
+2. Get.showSnackbar()
+	Get.showSnackbar(
+		GetBar(
+			title: 'Snackbar',
+			message: 'Snackbar',
+			duration: Duration(seconds: 2),
+				snackPosition: SnackPosition.BOTTOM,
+		),
+	);
+	- Get.snackbar()와 거의 동일.
+	
+	
+** Dialog
+
+1. Get.defaultDialog()
+	Get.defaultDialog(title: 'Dialog', middleText: 'Dialog');
+	- Dialog를 화면에 띄어줌. 확인/취소 시에 실행할 함수(onConfirm, onCancel),
+		확인/취소 텍스트(textConfirm, textCancel), 배경색(backgroundColor) 등 여러 설정들 추가 가능
+		
+2. Get.dialog()
+	Get.dialog(
+		Dialog(
+			child: Container(
+				height: 100,
+				child: Center(
+					child: Text('Dialog'),
+				),
+			),
+		),
+	);
+	- Get.defaultDialog()와 달리 원래 사용하던 기존 Dialog 위젯을 가져와서 사용할 수 있음
+	
+
+** BottomSheet
+
+1. Get.bottomSheet()
+	Get.bottomSheet(
+		Container(
+			height: 100,
+			color: Colors.white,
+			child: Center(
+				child: Text('BottomSheet'),
+			),
+		),
+	)
+	- 내부에 들어갈 위젯만 넣어주면 해당 위젯을 포함하는 BottomSheet를 보여줌
+	
+	
