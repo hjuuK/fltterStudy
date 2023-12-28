@@ -1,4 +1,4 @@
-GetView
+GetView : GetView는 주로 단일 컨트롤러를 사용하여 화면을 업데이트하는 데 사용됨
 
 - GetView를 통해 보다 간결하게 GetxController나 GetxService를 StatelessWidget에 추가할 수 있음
 	
