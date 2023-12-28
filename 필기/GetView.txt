@@ -1,0 +1,53 @@
+GetView
+
+- GetView를 통해 보다 간결하게 GetxController나 GetxService를 StatelessWidget에 추가할 수 있음
+	
+	이때, GetView는 Get.find()함수를 통해 컨트롤러를 호출하는데, Get.put() 또는 Get.lazyPut()을 통해
+	미리 컨트롤러 인스턴스를 메로리 공간에 적재해야함
+	
+	이를 위해 GetX에서는 Bindings를 지원
+	바인딩은 적절한 시점에 해주는 것이 좋은데, 보통 앱 시작시 호출되는 컨트롤러의 경우 GetMaterialApp()의 initialBinding에서,
+	그 외에는 필요한 페이지가 라우트되는 시점에 바인딩 해주는 것이 좋음
+	
+	
+	class SomeBinding extends Bindings {
+	@override
+    dependencies() {
+    	Get.put(SomeController());
+    }
+	}
+
+	class SomeController extends GetxController {
+		final someText = ''.obs;
+	}
+
+	class SomeWidget extends GetView<SomeController> {
+		const SomeWidget({Key? key}) :super(key: key);
+			
+			// 이 코드는 이제 사용하지 않아도 된다.
+			// final controller = Get.put(SomeController()); 
+			
+			@override
+			Widget build(BuildContext context) {
+				return Container(
+						child: Text(controller.someText.value); 
+					);
+			}
+	}
+
+	class SomePage extends StatelessWidget {
+		const SomePage({Key? key}) :super(key: key);
+			
+			@override
+			Widget build(BuildContext context) {
+				return Container(
+						child: TextButton(
+								onPressed: () => Get.to(
+										SomeWidget(),
+										binding: SomeBinding(),  // Get.to가 실행될 때 SomeBinding에서 dependencies()함수를 호출함.
+									);
+									child: const Text('Go to Some Widget');
+							); 
+					);
+			}
+	}
