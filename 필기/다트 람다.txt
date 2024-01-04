@@ -1,0 +1,237 @@
+flutter 람다식 함수
+
+람다식 : 다트 공식 문서에서 이름이 없는 함수 (익명함수, 람다, 클로저(closure))
+
+* 익명함수
+	- 이름 없는 익명 함수(Anonymous Function)를 정의하여 사용 가능
+	- ([인수명]){[동작 또는 반환값]}
+	
+	*number가 짝수면 true, 혹수면 false를 반환하는 코드
+	var a = (number) {
+		return number % 2 == 0;
+	};
+	void main() {
+		print(a(10)); // 결과값: true
+	}
+	
+* 람다식
+	- ([인수명]) => [동작 또는 반환값]
+	
+	* 짝수를 구하는 함수를 람다식으로 표현
+	var a = (number) => number % 2 == 0;
+	void main() {
+		print(a(10)); // 결과값 : true
+	}
+	
+	
+--------------------------------------------------------
+
+함수의 일반적인 특징
+: 함수를 사용하면 한 번만 작성하고 여러 곳에서 재활용 가능
+	반환할 값이 없을 때는 void 키워드 사용
+	
+	int addTwoNumbers(int a, int b) {
+		return a + b;
+	}
+	void main() {
+		print(addTwoNumbers(1, 2)); // 3
+	}
+	
+
+- 네임드 파라미터 : 네임드 파라미터를 지정하려면 중괄호{}와 required 키워드 사용
+
+	int addTwoNumbers({
+		required int a,
+		required int b,
+	}) {
+		return a + b;
+	}
+	void main() {
+		print(addTwoNumbers(a: 1, b: 2)); // 3
+	}
+	
+	* 여기서 required 키워드는 매개변수가 null값이 불가능한 타입이면 기본값을 지정해주거나 필수로 입력해야 한다는 뜻
+	
+	
+- 포지셔널 파라미터 : 기본값을 갖는 포지셔널 파라미터 지정 , [] 사용
+
+	int addTwoNumbers(int a, [int b = 2]) {
+		return a + b;
+	}
+	void main() {
+		print(addTwoNumbers(1)); // 3
+	}
+	
+- 네임드 파라미터에 기본값 적용
+	: required 키워드를 생략해주고 등호 다음에 원하는 기본값을 입력해주면 됨
+	
+	int addTwoNumbers({
+		required int a,
+		int b = 2,
+	}) {
+		return a + b;
+	}
+	void main() {
+		print(addTwoNumbers(a: 1)); // 3
+	}
+	
+- 포지셔널 파라미터와 네임드 파라미터 섞어서 사용 가능
+	섞어 쓸 때 -> 포지셔널 파라미터가 네임드 파라미터보다 반드시 먼저 위치해야 함
+	
+	int addTwoNumbers(
+		int a, {
+		required int b,
+		int c = 4,
+	}) {
+		return a + b + c;
+	}
+	void main() {
+		print(addTwoNumbers(1, b: 3, c: 7)); // 11
+	}
+	
+
+* 익명 함수와 람다 함수
+	- 둘 다 함수 이름이 없고 일회성으로 사용됨
+	- 많은 언어에서 익명함수와 람다함수를 구분하지만 다트에서는 구분하지 않음
+	
+	** 익명함수
+		(매개변수) {
+			함수 바디
+		}
+	
+	** 람다함수
+		(매개변수) => 단 하나의 스테이트먼트
+		
+		- 람다 함수 : 익명 함수에서 {}를 빼고 => 기호를 추가한 것
+		- 매개변수는 아예 없거나 하나 이상이어도 됨
+		- 익명 함수와 달리 코드 블록을 묶는 {}가 없는 람다는 함수 로직을 수행하는 스테이트먼트가 딱 하나여야 함 (한 줄 x. 명령 단위가 하나)
+		- 람다 함수는 이름을 정하고 미리 선언할 필요가 없어서 글로벌 스코프로 다룰 필요 x
+			* 하나의 스테이트먼트만 다루기 때문에 적절히 사용하면 간결하게 코드 작성 가능. 가독성이 없음
+			* 콜백 함수나 리스트의 map(), reduce(), fold() 함수 등에서 일회성이 높은 로직을 작성할 때 주로 사용
+			
+			
+		- reduce() 함수를 이용해서 리스트의 모든 값을 더하는 익명 함수
+			void main() {
+				List<int> numbers = [1, 2, 3, 4, 5];
+				
+				// 일반 함수로 모든 값 더하기
+				final allMembers = numbers.reduce((value, element) {
+					return value + element;
+				});
+				
+				print(allMembers); // 15
+			}
+			
+		- reduce() 함수를 이용해서 리스트의 모든 값을 더하는 람다 함수
+			void main() {
+				List<int> numbers = [1, 2, 3, 4, 5];
+				
+				// 람다 함수로 모든 값 더하기
+				final allMembers = numbers.reduce((value, element) => value + element);
+				
+				print(allMembers); // 15
+			}
+			
+			
+* typedef와 함수
+	- 함수의 시그니처를 정의하는 값 (시그니처: 반환값 타입, 매개변수 개수와 타입 등)
+	- 함수 선언부를 정의하는 키워드 (함수가 무슨 동작을 하는지에 대한 정의는 없음)
+	
+	typedef Operation = void Function(int x, int y);
+	-> 함수를 선언하기는 했지만 무엇을 하는지 동작이 없음
+	
+	=>
+	typedef Operation = void Function(int x, int y);
+	
+	void add(int x, int y) {
+		print('결과값 : ${x + y}');
+	}
+	
+	void sub(int x, int y) {
+		print('결과값 : ${x - y}');
+	}
+	
+	void cal(int x, int y, Operation oper) {
+		oper(x, y);
+	}
+	
+	void main() {
+		// typedef는 일반적인 변수의 type처럼 사용 가능
+		Operation oper = add;
+		oper(1, 2); // 3
+		
+		oper = sub;
+		oper(1, 2); // -1
+		
+		cal(1, 2, add); // 3
+			=> 다트에서 함수는 일급 객체(First-class citizen)이므로 함수를 값처럼 사용 가능
+				그래서 플러터에서는 typedef로 선언한 함수를 다음과 같이 매개변수로 넣어 사용함
+	}
+	
+	
+	
+----------------------------------------------------------------------
+
+Tear-offs : 람다 함수 없이 함수의 이름만으로 사용하는 것. 코드의 간결함 추구
+
+	- 람다 함수로 구현
+	class _MyAppState extends State<MyApp> {
+		String text =  "";
+
+		@override
+		Widget build(BuildContext context) {
+			return MaterialApp(
+				home: Scaffold(
+					body: Center(
+						child: Column(
+							mainAxisAlignment: MainAxisAlignment.center,
+							children: [
+								Text(text),
+								SizedBox(height: 18),
+								TextFormField(
+									onChanged: (value) {
+										setState(() {
+											text = value;
+										});
+									},
+								),
+							],
+						),
+					),
+				),
+			);
+		}
+	}
+	
+	- Tear-offs 로 구현
+	class _MyAppState extends State<MyApp> {
+		String text =  "";
+
+		@override
+		Widget build(BuildContext context) {
+			return MaterialApp(
+				home: Scaffold(
+					body: Center(
+						child: Column(
+							mainAxisAlignment: MainAxisAlignment.center,
+							children: [
+								Text(text),
+								SizedBox(height: 18),
+								TextFormField(
+									onChanged: setText,
+								),
+							],
+						),
+					),
+				),
+			);
+		}
+
+		void setText(String value) {
+			setState(() {
+				text = value;
+			});
+		}
+	}
+	
+	** onChanged의 Type은 반환이 없고 파라미터로는 String을 받는 함수 Type
