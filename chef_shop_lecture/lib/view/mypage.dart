@@ -1,4 +1,5 @@
 import 'package:chef_shop_lecture/controller/controller.dart';
+import 'package:chef_shop_lecture/view/product_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,8 +37,8 @@ class MyPage extends StatelessWidget {
                 crossAxisSpacing: 10
               ),
               itemBuilder: (context, index){
-                return Container(
-                  color: Colors.red,
+                return ProductTile(
+                  controller.productList[index],
                 );
               },
               itemCount: controller.productList.length,
