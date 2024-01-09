@@ -45,7 +45,7 @@ class _LoginSigupScreenState extends State<LoginSigupScreen> {
                         ),
                         children: [
                           TextSpan(
-                            text: ' to HJ chat!',
+                            text: isSignupScreen ? ' to HJ chat!' : ' back',
                             style: TextStyle(
                               letterSpacing: 1.0,
                               fontSize: 25,
@@ -60,7 +60,7 @@ class _LoginSigupScreenState extends State<LoginSigupScreen> {
                       height: 5.0,
                     ),
                     Text(
-                      'Signup to continue',
+                      isSignupScreen ? 'Signup to continue' : 'Signin to continue',
                       style: TextStyle(
                         letterSpacing: 1.0,
                         color: Colors.white,
@@ -72,11 +72,15 @@ class _LoginSigupScreenState extends State<LoginSigupScreen> {
             ),
           ),
           // 배경 Positioned
-          Positioned(
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeIn,
             top: 180,
-            child: Container(
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeIn,
               padding: EdgeInsets.all(20.0),
-              height: 280.0,
+              height: isSignupScreen ? 280.0 : 250.0,
               width: MediaQuery.of(context).size.width - 40,
               margin: EdgeInsets.symmetric(horizontal: 20.0),
               decoration: BoxDecoration(
@@ -155,6 +159,7 @@ class _LoginSigupScreenState extends State<LoginSigupScreen> {
                       ),
                     ],
                   ),
+                  if(isSignupScreen)
                   Container(
                     margin: EdgeInsets.only(top: 20),
                     child: Form(
@@ -197,7 +202,7 @@ class _LoginSigupScreenState extends State<LoginSigupScreen> {
                           TextFormField(
                             decoration: InputDecoration(
                               prefixIcon: Icon(
-                                Icons.account_circle,
+                                Icons.email_rounded,
                                 color: Palette.iconColor,
                               ),
                               enabledBorder: OutlineInputBorder(
@@ -217,7 +222,7 @@ class _LoginSigupScreenState extends State<LoginSigupScreen> {
                                   Radius.circular(35.0),
                                 ),
                               ),
-                              hintText: 'User name',
+                              hintText: 'email',
                               hintStyle: TextStyle(
                                 fontSize: 14,
                                 color: Palette.textColor1,
@@ -231,7 +236,7 @@ class _LoginSigupScreenState extends State<LoginSigupScreen> {
                           TextFormField(
                             decoration: InputDecoration(
                               prefixIcon: Icon(
-                                Icons.account_circle,
+                                Icons.lock,
                                 color: Palette.iconColor,
                               ),
                               enabledBorder: OutlineInputBorder(
@@ -251,7 +256,7 @@ class _LoginSigupScreenState extends State<LoginSigupScreen> {
                                   Radius.circular(35.0),
                                 ),
                               ),
-                              hintText: 'User name',
+                              hintText: 'password',
                               hintStyle: TextStyle(
                                 fontSize: 14,
                                 color: Palette.textColor1,
@@ -263,13 +268,90 @@ class _LoginSigupScreenState extends State<LoginSigupScreen> {
                       ),
                     ),
                   ),
+                  if(!isSignupScreen)
+                  Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: Form(
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.email_rounded,
+                                color: Palette.iconColor,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                // focusedBorder : 선택했을때 모양 변하지 않게 focus
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              hintText: 'email',
+                              hintStyle: TextStyle(
+                                fontSize: 14,
+                                color: Palette.textColor1,
+                              ),
+                              contentPadding: EdgeInsets.all(10),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 8.0,
+                          ),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.lock,
+                                color: Palette.iconColor,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                // focusedBorder : 선택했을때 모양 변하지 않게 focus
+                                borderSide: BorderSide(
+                                  color: Palette.textColor1,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(35.0),
+                                ),
+                              ),
+                              hintText: 'password',
+                              hintStyle: TextStyle(
+                                fontSize: 14,
+                                color: Palette.textColor1,
+                              ),
+                              contentPadding: EdgeInsets.all(10),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
           ),
           // 텍스트 폼 필드 Positioned
-          Positioned(
-            top: 430,
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeIn,
+            top: isSignupScreen ? 430 : 390,
             right: 0,
             left: 0,
             child: Center(
@@ -311,7 +393,7 @@ class _LoginSigupScreenState extends State<LoginSigupScreen> {
             left: 0,
             child: Column(
               children: [
-                Text('or Signup with'),
+                Text(isSignupScreen ? 'or Signup with' : 'or Signin with'),
                 SizedBox(
                   height: 10,
                 ),
